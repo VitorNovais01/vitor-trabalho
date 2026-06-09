@@ -35,7 +35,7 @@ export default function Footer() {
 
             <p>📧 contato@bioenergy.com.br</p>
             <p>📞 (19) 99999-9999</p>
-            <p>📍 Hortolândia - SP</p>
+            <p>📍 Campinas - SP</p>
           </div>
 
           <div>
