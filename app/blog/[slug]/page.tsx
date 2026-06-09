@@ -1,42 +1,40 @@
 import { supabase } from "../../../lib/supabase";
+import { notFound } from "next/navigation";
 
 export default async function Post({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = await params;
 
-  const { data: post } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("slug", params.slug)
-    .single();
+  try {
+    const { data: post, error } = await supabase
+      .from("posts")
+      .select("*")
+      .eq("slug", slug)
+      .maybeSingle();
 
-  if (!post) {
-    return <h1>Post não encontrado</h1>;
+    if (error) {
+      console.error(error);
+      notFound();
+    }
+
+    if (!post) {
+      notFound();
+    }
+
+    return (
+      <article className="container mx-auto py-10">
+        <h1 className="text-4xl font-bold mb-4">
+          {post.title}
+        </h1>
+
+        <p>{post.content}</p>
+      </article>
+    );
+  } catch (err) {
+    console.error(err);
+    notFound();
   }
-
-  return (
-    <article className="container mx-auto py-10">
-
-      <img
-        src={post.image}
-        alt={post.title}
-        className="w-full rounded-lg mb-8"
-      />
-
-      <h1 className="text-5xl font-bold mb-5">
-        {post.title}
-      </h1>
-
-      <p className="text-gray-600 mb-6">
-        {post.excerpt}
-      </p>
-
-      <div>
-        {post.content}
-      </div>
-
-    </article>
-  );
 }
